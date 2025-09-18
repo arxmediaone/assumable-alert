@@ -1,5 +1,4 @@
 import { kv } from '@vercel/kv';
-
 export type Listing = {
   listingId: string;
   address: string;
@@ -25,8 +24,8 @@ export async function addListing(item: Listing) {
 }
 
 export async function getAllListings(): Promise<Listing[]> {
-  const hash = await kv.hgetall<string>(KEY);
+  // T is the ENTIRE record shape
+  const hash = await kv.hgetall<Record<string, string>>(KEY);
   if (!hash) return [];
   return Object.values(hash).map((s) => JSON.parse(s) as Listing);
 }
-
