@@ -2,17 +2,15 @@
 import { NextResponse } from 'next/server';
 import { getAllListings } from '@/lib/kv';
 
-export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
-  try {
-    const listings = await getAllListings(); // <-- tolerant reader
-    return NextResponse.json({ listings });
-  } catch (e: any) {
-    return NextResponse.json(
-      { error: String(e?.message || e) },
-      { status: 500 }
-    );
-  }
+  const listings = await getAllListings(); // already real objects
+  // (optional) newest first here, so clients don’t have to sort
+  listings.sort((a, b) => {
+    const ta = a.firstSeen ? Date.parse(a.firstSeen) : 0;
+    const tb = b.firstSeen ? Date.parse(b.firstSeen) : 0;
+    return tb - ta;
+  });
+  return NextResponse.json({ listings });
 }
