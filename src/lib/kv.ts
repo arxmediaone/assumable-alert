@@ -1,4 +1,3 @@
-// src/lib/kv.ts
 import { kv } from '@vercel/kv';
 
 export type Listing = {
@@ -41,4 +40,3 @@ export async function getAllListings(): Promise<Listing[]> {
   }
   return out;
 }
-
