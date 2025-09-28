@@ -5,10 +5,8 @@ import ListingCard from "@/components/ListingCard";
 export const dynamic = "force-dynamic"; // always up-to-date on reload
 
 export default async function HomePage() {
-  // 1) Load from KV
   const listings = await getAllListings();
 
-  // 2) Sort newest first
   listings.sort((a, b) => {
     const ta = a.firstSeen ? Date.parse(a.firstSeen) : 0;
     const tb = b.firstSeen ? Date.parse(b.firstSeen) : 0;
@@ -20,7 +18,9 @@ export default async function HomePage() {
       <h1 className="text-2xl font-bold">Assumable Listings</h1>
 
       {listings.length === 0 ? (
-        <p className="text-gray-600">No listings yet. Send an email to your parse address to add one.</p>
+        <p className="text-gray-600">
+          No listings yet. Send an email to your parse address to add one.
+        </p>
       ) : (
         <section className="grid gap-4">
           {listings.map((l) => (
