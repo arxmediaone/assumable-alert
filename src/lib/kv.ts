@@ -1,4 +1,6 @@
+// src/lib/kv.ts
 import { kv } from '@vercel/kv';
+
 export type Listing = {
   listingId: string;
   address: string;
@@ -23,21 +25,17 @@ export async function addListing(item: Listing) {
   await kv.hset(KEY, { [rec.listingId]: JSON.stringify(rec) });
 }
 
-
-}export async function getAllListings(): Promise<Listing[]> {
+export async function getAllListings(): Promise<Listing[]> {
   const hash = await kv.hgetall<Record<string, unknown>>(KEY);
   if (!hash) return [];
 
   const out: Listing[] = [];
   for (const v of Object.values(hash)) {
     try {
-      if (typeof v === 'string') {
-        out.push(JSON.parse(v) as Listing);
-      } else {
-        out.push(v as Listing);
-      }
+      if (typeof v === 'string') out.push(JSON.parse(v) as Listing);
+      else out.push(v as Listing);
     } catch {
-      // Skip malformed values instead of breaking everything
+      // skip malformed entries instead of throwing
       continue;
     }
   }
