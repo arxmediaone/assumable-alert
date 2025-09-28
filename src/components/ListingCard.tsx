@@ -1,3 +1,4 @@
+// src/components/ListingCard.tsx
 import React from "react";
 import type { Listing } from "@/lib/kv";
 
