@@ -23,9 +23,23 @@ export async function addListing(item: Listing) {
   await kv.hset(KEY, { [rec.listingId]: JSON.stringify(rec) });
 }
 
-export async function getAllListings(): Promise<Listing[]> {
-  // T is the ENTIRE record shape
-  const hash = await kv.hgetall<Record<string, string>>(KEY);
+
+}export async function getAllListings(): Promise<Listing[]> {
+  const hash = await kv.hgetall<Record<string, unknown>>(KEY);
   if (!hash) return [];
-  return Object.values(hash).map((s) => JSON.parse(s) as Listing);
+
+  const out: Listing[] = [];
+  for (const v of Object.values(hash)) {
+    try {
+      if (typeof v === 'string') {
+        out.push(JSON.parse(v) as Listing);
+      } else {
+        out.push(v as Listing);
+      }
+    } catch {
+      // Skip malformed values instead of breaking everything
+      continue;
+    }
+  }
+  return out;
 }
